@@ -1,4 +1,4 @@
-from src.models import Users
+from src.models.models import Users
 from sqlalchemy.orm import class_mapper
 
 class ApiController:
@@ -50,19 +50,26 @@ class ApiController:
         return response, status_code
     
     def get_user_by_field(self, field, value):
-        user = self.session.query(Users).filter(getattr(Users, field) == value).first()
-        user_dict = self.object_as_dict(user)
-        if user:
+        try:
+            user = self.session.query(Users).filter(getattr(Users, field) == value).first()
+            user_dict = self.object_as_dict(user)
+            if user:
+                response = {
+                    'success': True,
+                    'user': user_dict
+                }
+                status_code = 200
+            else:
+                response = {
+                    'success': False,
+                    'message': f'L\'utilisateur avec {field} = {value} n\'a pas été trouvé'
+                }
+                status_code = 404
+        except:
             response = {
-                'success': True,
-                'user': user_dict
-            }
-            status_code = 200
-        else:
-            response = {
-                'success': False,
-                'message': f'L\'utilisateur avec {field}={value} n\'a pas été trouvé'
-            }
+                    'success': False,
+                    'message': f'Le fiel = {field} n\'existe pas dans le model'
+                }
             status_code = 404
         
         return response, status_code

@@ -3,8 +3,9 @@ from sqlalchemy.orm import sessionmaker
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
 from json import dumps, loads
+import sys
 from config import Config
-from src.ApiController import ApiController
+from src.controllers.ApiController import ApiController
 
 engine = create_engine(f"mysql+pymysql://{Config.DB_USERNAME}:{Config.DB_PASSWORD}@{Config.DB_HOST}:{Config.DB_PORT}/{Config.DB_NAME}")
 
@@ -87,10 +88,16 @@ class APIHandler(BaseHTTPRequestHandler):
         self.wfile.write(dumps(response).encode())
 
 def run_server():
-    server_address = ('', 8000)
-    httpd = HTTPServer(server_address, APIHandler)
-    print('Serveur démarré sur le port 8000...')
-    httpd.serve_forever()
+    try:
+        port = 5000
+        server_address = ('', port)
+        httpd = HTTPServer(server_address, APIHandler)
+        print(f"Serveur démarré sur le port {port}...")
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print("\nArrêt du serveur...")
+        httpd.server_close()
+        sys.exit()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run_server()
