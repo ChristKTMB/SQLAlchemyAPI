@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: Ch16donbosco
+      MYSQL_DATABASE: central
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: Ch16donbosco
+    ports:
+      - 3306:3306
+
+  web:
+    image: api_rest_users
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["sh", "-c", "sleep 25 && python fakerData.py && python main.py"]
+    environment:
+      DATABASE_URL: mysql+pymysql://dev:Ch16donbosco@db:3306/central
+    depends_on:
+      - db
+    ports:
+      - 5000:5000
