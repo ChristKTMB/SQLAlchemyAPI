@@ -1,15 +1,35 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy import Column, Integer, String
 from random import choice
 import string
-from models.models import Users
-from config import Config
+import os
 
-# Créez une connexion à votre base de données
-engine = create_engine(f"mysql+pymysql://{Config.DB_USERNAME}:{Config.DB_PASSWORD}@{Config.DB_HOST}:{Config.DB_PORT}/{Config.DB_NAME}")
+# Créer une instance de Base
+Base = declarative_base()
 
-conn = engine.connect()
 
+# Définir le modèle Users
+class Users(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255)) 
+    last_name = Column(String(255)) 
+    first_name = Column(String(255))
+    email = Column(String(255))
+    phone = Column(String(20))
+    password = Column(String(255)) 
+
+database_url = os.getenv('DATABASE_URL')
+
+# Créer le moteur SQLAlchemy
+engine = create_engine(database_url)
+
+# Créer les tables dans la base de données
+Base.metadata.create_all(engine)
+
+# Créer une session SQLAlchemy
 Session = sessionmaker(bind=engine)
 session = Session()
 

@@ -4,10 +4,13 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
 from json import dumps, loads
 import sys
+import os
 from config import Config
 from src.controllers.ApiController import ApiController
 
-engine = create_engine(f"mysql+pymysql://{Config.DB_USERNAME}:{Config.DB_PASSWORD}@{Config.DB_HOST}:{Config.DB_PORT}/{Config.DB_NAME}")
+database_url = os.getenv('DATABASE_URL')
+
+engine = create_engine(database_url)
 
 conn = engine.connect()
 
@@ -101,3 +104,4 @@ def run_server():
 
 if __name__ == "__main__":
     run_server()
+    
