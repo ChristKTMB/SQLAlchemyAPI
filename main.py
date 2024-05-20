@@ -5,7 +5,6 @@ from urllib.parse import urlparse, parse_qs
 from json import dumps, loads
 import sys
 import os
-from config import Config
 from src.controllers.ApiController import ApiController
 
 database_url = os.getenv('DATABASE_URL')
