@@ -1,15 +1,13 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from src.controllers.ApiController import ApiController
 from urllib.parse import urlparse, parse_qs
 from json import dumps, loads
+from decouple import config
 import sys
-import os
-from src.controllers.ApiController import ApiController
 
-database_url = os.getenv('DATABASE_URL')
-
-engine = create_engine(database_url)
+engine = create_engine(f"mysql+pymysql://{config("DB_USER")}:{config("DB_PASSWORD")}@{config("DB_HOST")}:{config("DB_PORT")}/{config("DB_NAME")}")
 
 conn = engine.connect()
 
@@ -69,10 +67,10 @@ class APIHandler(BaseHTTPRequestHandler):
             
             method = data.get('method', '')
             if method == 'login':
-                name = data.get('name', '')
+                username = data.get('username', '')
                 password = data.get('password', '')
                 
-                response, status_code = api.login(name, password)
+                response, status_code = api.login(username, password)
 
             else:
                 response = {'message': 'Méthode non supportée'}

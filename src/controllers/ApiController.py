@@ -7,7 +7,7 @@ class ApiController:
 
     def object_as_dict(self, obj):
         """
-        Convertit un objet SQLAlchemy en un dictionnaire
+        Convertit un objet SQLAlchemy en une liste d'objet
         """
         if obj is None:
             return None
@@ -31,8 +31,8 @@ class ApiController:
         
         return response, status_code
 
-    def login(self, name, password):
-        user = self.session.query(Users).filter(Users.name == name, Users.password == password).first()
+    def login(self, username, password):
+        user = self.session.query(Users).filter(Users.username == username, Users.password == password).first()
         user_dict = self.object_as_dict(user)
         if user:
             response = {
@@ -62,13 +62,13 @@ class ApiController:
             else:
                 response = {
                     'success': False,
-                    'message': f'L\'utilisateur avec {field} = {value} n\'a pas été trouvé'
+                    'message': f'L\'utilisateur avec le champ {field} = {value} n\'a pas été trouvé'
                 }
                 status_code = 404
         except:
             response = {
                     'success': False,
-                    'message': f'Le fiel = {field} n\'existe pas dans le model'
+                    'message': f'Le champ = {field} n\'existe pas dans la base de donnée'
                 }
             status_code = 404
         
