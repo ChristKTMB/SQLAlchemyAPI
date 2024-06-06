@@ -1,29 +1,38 @@
 version: '3.8'
 
 services:
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: Ch16donbosco
-      MYSQL_DATABASE: central
-      MYSQL_USER: dev
-      MYSQL_PASSWORD: Ch16donbosco
-    ports:
-      - 3306:3306
-
-  web:
-    image: api_rest_users
+  app:
+    image: api_users
     build:
-      context: .
-      dockerfile: Dockerfile
-    command: ["sh", "-c", "sleep 25 && python fakerData.py && python main.py"]
-    environment:
-      DB_HOST: "db"
-      DB_PORT: "3306"
-      DB_USER: dev
-      DB_PASSWORD: Ch16donbosco
-      DB_NAME: central
-    depends_on:
-      - db
+      context: ..
+      dockerfile: docker/Dockerfile
+    command: ["sh", "-c", "sleep 25 && python main.py"]
     ports:
-      - 5000:5000
+      - "5000:5000"
+    environment:
+      DB_USER: "Devcode"
+      DB_PASSWORD: "Ch16donbosco"
+      DB_HOST: "db-alchemy"
+      DB_PORT: "3306"
+      DB_NAME: "members"
+    depends_on:
+      - db-alchemy
+
+  db-alchemy:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "Ch16donbosco"
+      MYSQL_DATABASE: "members"
+      MYSQL_USER: "Devcode"
+      MYSQL_PASSWORD: "Ch16donbosco"
+    volumes:
+      - mysql_api_data:/var/lib/mysql
+
+networks:
+  api_users_network:
+    driver: bridge
+
+volumes:
+  mysql_api_data:

@@ -1,0 +1,7 @@
+# Docker ignore file
+
+# Ignorer le fichier .env
+.env
+
+# Ignorer le dossier kubernetes
+kubernetes/
