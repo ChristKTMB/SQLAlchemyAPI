@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apiweb-config
+data:
+  DB_HOST: "apidb-svc"
+  DB_PORT: "3307"

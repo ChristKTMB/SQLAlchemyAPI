@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apidb-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apidb
+  template:
+    metadata:
+      labels:
+        app: apidb
+    spec:
+      containers:
+      - name: apibd-mysql
+        image: mysql:8.0
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: apidb-secret
+              key: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: apidb-secret
+              key: MYSQL_DATABASE
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: apidb-secret
+              key: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: apidb-secret
+              key: MYSQL_PASSWORD
+      #   volumeMounts:
+      #   - name: mysql-persistent-storage  # Nom du volume persistant
+      #     mountPath: /var/lib/mysql       # Chemin dans le conteneur où le volume sera monté
+      # volumes:
+      # - name: mysql-persistent-storage    # Nom du volume persistant
+      #   persistentVolumeClaim:
+      #     claimName: mysql-pv-claim       # Nom de la revendication du volume persistant
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apidb-svc
+spec:
+  selector:
+    app: apidb
+  ports:
+  - protocol: TCP
+    port: 3307
+    targetPort: 3306
+  type: NodePort
